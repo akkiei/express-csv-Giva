@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+</head>
+<script>
+    // var fileNameGlobal = "";
+    function submitHandler() {
+        const fileInput = document.getElementById("fileSelector");
+        const fileObj = fileInput.files[0];
+        const fileName = fileObj.name;
+        const fileExtenstion = fileName.split(".")[1];
+        if (fileExtenstion != "csv") {
+            alert("Please upload only csv files");
+            return;
+        }
+        const percentage = document.getElementById("percentage");
+        var formData = new FormData();
+        formData.append("myFile", fileObj);
+
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == XMLHttpRequest.DONE) {
+                const filename = JSON.parse(xhr.responseText);
+                // downloadCsv(fileName.fileName);
+                // document.getElementById('download').hidden = false;
+                window.open('download/' + filename.fileName);
+
+            }
+        };
+        xhr.open("POST", "http://localhost:3000/upload");
+        xhr.send(formData);
+    }
+
+    // function downloadCsv() {
+    //     const xhr = new XMLHttpRequest();
+    //     const params = `fileName=${fileNameGlobal}`;
+    //     xhr.onreadystatechange = function () {
+    //         if (xhr.readyState == XMLHttpRequest.DONE) {
+    //             const data = xhr.responseText;
+    //             // console.log(data);
+    //         }
+    //     };
+    //     xhr.open("GET", "http://localhost:3000/download/" + fileNameGlobal, true);
+    //     // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    //     xhr.send();
+
+    //     // window.open('/download');
+    //     // const a = JSON.stringify({ fileName: fileName });
+    //     // const res = await fetch("http://localhost:3000/download/csv", {
+    //     //     method: "POST",
+    //     //     body: a
+
+    //     // });
+    //     // const result = await res.json();
+    // }
+</script>
+
+<body>
+    <h1>Select Input Csv to download the processed one.</h1>
+    <input id="fileSelector" type="file" value="Choose Csv File" accept=".csv" enctype="multipart/form-data" />
+    <br />
+    <br />
+    <input type="submit" value="Submit" onclick="submitHandler()" />
+
+</body>
+
+</html>
