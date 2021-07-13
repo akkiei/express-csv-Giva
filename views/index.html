@@ -11,7 +11,11 @@
     // var fileNameGlobal = "";
     function submitHandler() {
         const fileInput = document.getElementById("fileSelector");
+        const submitBtn = document.getElementById("submit");
         const fileObj = fileInput.files[0];
+        if (!fileObj)
+            return;
+        submitBtn.disabled = true;
         const fileName = fileObj.name;
         const fileExtenstion = fileName.split(".")[1];
         if (fileExtenstion != "csv") {
@@ -65,7 +69,7 @@
     <input id="fileSelector" type="file" value="Choose Csv File" accept=".csv" enctype="multipart/form-data" />
     <br />
     <br />
-    <input type="submit" value="Submit" onclick="submitHandler()" />
+    <input type="submit" id="submit" value="Submit" onclick="submitHandler()" />
 
 </body>
 

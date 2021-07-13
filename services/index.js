@@ -10,22 +10,27 @@ const axios = require("axios");
 class RetrieveFile {
   constructor() {
     this.postOfficeURL = "https://api.postalpincode.in/pincode/";
-    this.deliveryURl = "https://jsonplaceholder.typicode.com/todos/1";
+      this.deliveryURl =
+          "https://jsonplaceholder.typicode.com/todos/1";
     //   "https://api.giva.co/getDeliveryTime?pin=";
     this.pinDeliveryArr = [];
     this.pinPostMap = new Map();
     this.failedRequestCounter = 0;
     this.retry = 5;
-    this.finalCsvRows = [];
-  }
-
-  createFinalCsv() {
-    const col = this.pinDeliveryArr.map(() => []);
+    this.finalCsvRows = [
+      [
+        "Pincode",
+        "Name of Post Office",
+        "District",
+        "State",
+        "Expected date of delivery",
+      ],
+    ];
   }
 
   async processCSV(filePath) {
     const getPinCodes = await this.getCsv(filePath);
-    const throttleFunc = await this.throttle(getPinCodes.slice(1, 10));
+    const throttleFunc = await this.throttle(getPinCodes);
     await throttleFunc();
 
     return {
@@ -39,7 +44,6 @@ class RetrieveFile {
 
   async getPostOfficeInfo(pincode) {
     let flag = false;
-
     for (let i = 0; i < this.retry; i++) {
       const poRequest = await axios.default
         .get(this.postOfficeURL + pincode, {
@@ -47,13 +51,11 @@ class RetrieveFile {
         })
         .catch((e) => {
           flag = true;
-
           // console.log(e.response.status);
           console.log("request failed for POFFICE:", pincode);
         });
       //   this.pinPostMap.set(pincode, poRequest.data[0].PostOffice);
       if (poRequest) {
-        if (poRequest)
           if (flag) console.log("request Passed for POFFICE:", pincode);
         return poRequest.data[0].PostOffice;
       }
